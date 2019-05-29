@@ -88,7 +88,7 @@ lazy val project =
           baseDirectory.value / "resources" / "static",
           baseDirectory.value / "resources" / "templates",
           baseDirectory.value / "src" / "main" / "resources",
-          "Scala.js Project Template",
+          "Scala.js Project Template With Electron",
           buildVersion.value,
           isRelease = true
         )
