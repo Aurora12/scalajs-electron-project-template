@@ -1,6 +1,6 @@
 import complete.DefaultParsers._
 
-name := "scalajs-project-template"
+name := "scalajs-electron-project-template"
 version := "0.0.1"
 scalaVersion := "2.12.8"
 
@@ -36,19 +36,26 @@ lazy val wartremoverSettings = Seq(
 )
 
 lazy val targetDirectory = settingKey[File]("Target build directory")
-lazy val buildVersion = settingKey[String]("Build version from -Drelease_version parameter.")
-lazy val buildRelease = inputKey[Unit]("Build release application")
-lazy val buildDev = inputKey[Unit]("Build dev application")
+lazy val webBuildDir = settingKey[File]("Web build directory")
+lazy val electronBuildDir = settingKey[File]("Electron build directory")
+
+lazy val buildVersion = settingKey[String]("Build version from -Dversion parameter.")
+
+lazy val webRelease = inputKey[Unit]("Build release web application")
+lazy val webDev = inputKey[Unit]("Build dev web application")
+lazy val electron =
+  inputKey[Unit]("Build electron app for selected platform without rebuilding web")
 
 targetDirectory := baseDirectory.value / "bin"
+webBuildDir := targetDirectory.value / "web"
+electronBuildDir := targetDirectory.value / "electron"
 
-artifactPath in (Compile, fastOptJS) := targetDirectory.value / "js" / "main.js"
-artifactPath in (Compile, fullOptJS) := targetDirectory.value / "js" / "main.js"
-artifactPath in (Compile, packageJSDependencies) := targetDirectory.value / "js" / "dependencies.js"
+artifactPath in (Compile, fastOptJS) := webBuildDir.value / "js" / "main.js"
+artifactPath in (Compile, fullOptJS) := webBuildDir.value / "js" / "main.js"
+artifactPath in (Compile, packageJSDependencies) := webBuildDir.value / "js" / "dependencies.js"
 clean ~= { _ =>
   IO.delete(new File("./bin"))
 }
-
 Compile / fastOptJS ~= { result =>
   println(s"\nfastOptJS result:\n${result.data.getPath}\n")
   result
@@ -59,7 +66,7 @@ Compile / fullOptJS ~= { result =>
 }
 
 lazy val project =
-  Project("ScalajsProjectTemplate", file("."))
+  Project("ScalajsElectronProjectTemplate", file("."))
     .enablePlugins(ScalaJSPlugin)
     .settings(
       buildVersion := sys.props.get("version").getOrElse(version.value),
@@ -73,7 +80,7 @@ lazy val project =
         "org.webjars" % "jquery" % "2.2.1" / "jquery.js" minified "jquery.min.js",
         ProvidedJS / "js/example.js"
       ),
-      buildRelease := {
+      webRelease := {
         val log = streams.value.log
         log.info(s"Starting RELEASE build")
 
@@ -86,10 +93,20 @@ lazy val project =
           isRelease = true
         )
 
-        BuildUtils.collectResources(targetDirectory.value, keys)
+        val electronKeys = ElectronKeys(
+          "scalajs-electron",
+          "Scala.js Project Template With Electron",
+          "Aurora12",
+          "noregret.org@gmail.com",
+          "https://github.com/Aurora12",
+          "org.noregret.scalajs.electron",
+          "https://example.com/update/${os}"
+        )
+
+        BuildUtils.collectResources(webBuildDir.value, keys, electronKeys)
       },
-      buildRelease := buildRelease.dependsOn(Compile / compile, Compile / fullOptJS).evaluated,
-      buildDev := {
+      webRelease := webRelease.dependsOn(Compile / compile, Compile / fullOptJS).evaluated,
+      webDev := {
         val log = streams.value.log
         log.info(s"Starting DEV build")
 
@@ -102,21 +119,63 @@ lazy val project =
           isRelease = false
         )
 
-        BuildUtils.collectResources(targetDirectory.value, keys)
+        val electronKeys = ElectronKeys(
+          "scalajs-electron-dev",
+          "Scala.js Project Template With Electron (dev version)",
+          "Aurora12",
+          "noregret.org@gmail.com",
+          "https://github.com/Aurora12",
+          "org.noregret.scalajs.electron.dev",
+          "https://dev.example.com/update/${os}"
+        )
+
+        BuildUtils.collectResources(webBuildDir.value, keys, electronKeys)
       },
-      buildDev := buildDev.dependsOn(Compile / compile, Compile / fastOptJS).evaluated
+      webDev := webDev.dependsOn(Compile / compile, Compile / fastOptJS).evaluated,
+      electron := {
+        val log = streams.value.log
+        log.info(s"Starting electron build")
+        BuildUtils
+          .startElectronBuild(
+            spaceDelimited("<arg>").parsed.headOption,
+            webBuildDir.value,
+            electronBuildDir.value,
+            log
+          )
+      }
     )
 
 // shortcuts for clean & build
 
+commands += Command.command("electronMac") { s =>
+  "clean" ::
+    "webRelease" ::
+    "electron mac" ::
+    s
+}
+
+commands += Command.command("electronWin") { s =>
+  "clean" ::
+    "webRelease" ::
+    "electron win" ::
+    s
+}
+
+commands += Command.command("electronLinux") { s =>
+  "clean" ::
+    "webRelease" ::
+    "electron linux" ::
+    s
+}
+
 commands += Command.command("release") { s =>
   "clean" ::
-    "buildRelease" ::
+    "webRelease" ::
     s
 }
 
 commands += Command.command("dev") { s =>
   "clean" ::
-    "buildDev" ::
+    "webDev" ::
     s
 }

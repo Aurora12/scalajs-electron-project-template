@@ -4,9 +4,19 @@
     <meta charset="UTF-8">
     <title>%productName%</title>
     <link rel="stylesheet" type="text/css" href="css/example.css">
+    <link rel="icon" href="img/icon.png"/>
   </head>
   <body>
     <h1>%productName%</h1>
+
+    <script type="text/javascript">
+      if (navigator.userAgent.toLowerCase().indexOf('electron') != -1) {
+        window.nodeRequire = require
+        delete window.require
+        delete window.exports
+        delete window.module
+      }
+    </script>
 
     <script type="text/javascript" src="js/example.js"></script>
     <script type="text/javascript" src="js/dependencies.js"></script>

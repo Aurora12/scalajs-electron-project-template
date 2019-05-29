@@ -1,8 +1,10 @@
 import org.querki.jquery._
 import org.scalajs.dom.document
+import utils.ElectronHelper
 
 import scala.scalajs.js
 import scala.scalajs.js.annotation._
+import org.scalajs.dom._
 
 @JSExportTopLevel("MainDom")
 object MainDom {
@@ -29,6 +31,17 @@ object MainDom {
 
     useDom()
     useJquery()
+
+    if (ElectronHelper.isElectron) {
+      window.onbeforeunload = { e =>
+        val quitQuestion = "Are you sure you want to quit?"
+        e.asInstanceOf[js.Dynamic].returnValue = quitQuestion
+        ElectronHelper.askToQuit(quitQuestion)
+        quitQuestion
+      }
+      ElectronHelper.initialize
+      ElectronHelper.checkForUpdate
+    }
   }
 
   def useDom(): Unit = {

@@ -1,0 +1,52 @@
+{
+  "name": "%packageName%",
+  "version": "%version%",
+  "buildVersion": "%version%",
+  "private": true,
+  "license": "PROPRIETARY",
+  "build": {
+    "appId": "%appId%",
+    "linux": {
+      "target": ["AppImage"]
+    },
+    "mac": {
+      "icon": "app/img/icon.icns",
+      "target": ["zip","dmg"]
+    },
+    "win": {
+      "icon": "app/img/icon.ico",
+      "target": ["nsis"]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "perMachine": false
+    },
+    "appImage": {
+      "category": "Network"
+    },
+    "publish": [{
+        "provider": "generic",
+        "url": "%updateCheckUrl%",
+        "channel": "latest"
+      }
+    ]
+  },
+  "scripts": {
+    "start": "electron ./app/ --enable-logging",
+    "postinstall": "electron-builder install-app-deps",
+    "win-dist": "electron-builder build -w --x64",
+    "mac-dist": "electron-builder build -m --x64",
+    "linux-dist": "electron-builder build -l --x64",
+    "all-dist": "electron-builder build -lmw --x64"
+  },
+  "devDependencies": {
+    "electron": "^3.0.8",
+    "electron-builder": "20.31.2",
+    "electron-store": "^2.0.0",
+    "electron-context-menu": ">0.9.0",
+    "electron-debug": "^2.0.0",
+    "electron-log": "^2.0.0",
+    "electron-updater": "^3.2.3"
+  }
+}
