@@ -277,3 +277,24 @@ ipcMain.on('checkForUpdate', () => {
     updateTimerId = setInterval(checkForUpdates, 1000*60*30)
   }, 1000*5)
 })
+
+ipcMain.on('askToQuit', (event, text, labelYes, labelNo) => {
+  dialog.showMessageBox(mainWindow, {
+      type: "question",
+      buttons: [labelYes, labelNo],
+      defaultId: 0,
+      message: text,
+      cancelId: 1
+    },
+    (result) => {
+      webConsole.warn("Dialog result: "+result)
+      if (result == 0) {
+         mainWindow.webContents.send("confirmQuit")
+      }
+    }
+  )
+});
+ipcMain.on('readyToQuit', () => {
+  webConsole.warn("App is ready to quit!")
+  app.quit()
+});

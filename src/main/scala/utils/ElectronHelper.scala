@@ -45,7 +45,7 @@ object ElectronHelper {
   def checkForUpdate = ipcRenderer.send(Events.checkForUpdate)
 
   @SuppressWarnings(Array("org.wartremover.warts.Null"))
-  def showUnreadCount(count: Int): Unit =
+  def showBadgeCount(count: Int): Unit =
     if (isWindows)
       if (count > 0) {
         val text = if (count > 99) "99+" else if (count > 0) count.toString else ""
@@ -114,7 +114,7 @@ object ElectronHelper {
       println(s"ELECTRON: confirmed quit!")
       //
       // do something to finalize work before quit
-      //
+      // when ready, send the following:
       ipcRenderer.send(Events.readyToQuit)
     })
     println("Renderer process handlers set up!")
@@ -122,4 +122,5 @@ object ElectronHelper {
 
   def askToQuit(question: String) =
     ipcRenderer.send(Events.askToQuit, question, "Quit", "Stay")
+
 }

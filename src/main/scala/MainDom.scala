@@ -1,10 +1,10 @@
 import org.querki.jquery._
-import org.scalajs.dom.document
+import org.scalajs.dom.{document, _}
 import utils.ElectronHelper
 
 import scala.scalajs.js
 import scala.scalajs.js.annotation._
-import org.scalajs.dom._
+import scala.util.Random
 
 @JSExportTopLevel("MainDom")
 object MainDom {
@@ -54,10 +54,22 @@ object MainDom {
     document.body.appendChild(info)
   }
 
+  private val rnd: Random = new Random
+
   def useJquery(): Unit = {
     $("body").append("<div>Hello world with jQuery!</div>")
     $("body").append("<div id='clickTest'>Click me!</div>")
     $("body").append("<div>See console log for more info.</div>")
+    if (ElectronHelper.isElectron) {
+      $("body").append(
+        "<button id='badgeTest'>Set application badge count to random number</button>"
+      )
+      $("#badgeTest").click(
+        (_: JQueryEventObject) => ElectronHelper.showBadgeCount(rnd.nextInt(100))
+      )
+      $("body").append("<button id='removeBadge'>Remove application badge count</button>")
+      $("#removeBadge").click((_: JQueryEventObject) => ElectronHelper.showBadgeCount(0))
+    }
     $("#clickTest").click(onClick _)
   }
 

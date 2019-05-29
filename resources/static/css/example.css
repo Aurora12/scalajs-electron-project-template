@@ -13,3 +13,9 @@ pre {
     padding: 15px;
     display: inline-block;
 }
+
+button {
+    padding: 5px;
+    margin: 15px;
+    display: block;
+}

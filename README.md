@@ -6,6 +6,18 @@ Based on [Scala.js Project Template](https://github.com/Aurora12/scalajs-project
 
 The project shows common stuff one implements in a real-world crossplatform app for Web and Desktop.
 
+* The project produces 
+  * Web files, 
+  * Exe setup file for Windows,
+  * Zip and Dmg files for MacOS,
+  * AppImage file for Linux,
+  * YML files for auto-updating.
+* Uses Electron Builder.
+* Uses auto-update mechanism (see `/resources/templates/electron_main.js`).
+* Uses event-based communication between main desktop process and web app inside.
+* Uses application system badge (normally used to show update count).
+* Shows accessing Electron-specific services from web app.
+* Prevents desktop app from closing until web app reports it is ready to close. 
 
 ## Usage
 
