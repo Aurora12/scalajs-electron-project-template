@@ -12,7 +12,7 @@ The project shows common stuff one implements in a real-world crossplatform app 
   * Zip and Dmg files for MacOS,
   * AppImage file for Linux,
   * YML files for auto-updating.
-* Uses Electron Builder.
+* Uses [Electron Builder](https://github.com/electron-userland/electron-builder).
 * Uses auto-update mechanism (see `/resources/templates/electron_main.js`).
 * Uses event-based communication between main desktop process and web app inside.
 * Uses application system badge (normally used to show update count).
