@@ -7,6 +7,8 @@
 # generated or outer files
 target/
 bin/
+node_modules/
+package-lock.json
 
 # Intellij project files
 .idea
