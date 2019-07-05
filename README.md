@@ -1,6 +1,6 @@
 # Scala.js Electron Project Template
 
-Generic template for a Scala.js project targeting Web, MacOS, Windows and Linux. 
+A somewhat advanced template for a Scala.js project targeting Web, MacOS, Windows and Linux. 
 
 Based on [Scala.js Project Template](https://github.com/Aurora12/scalajs-project-template), see details there. 
 
