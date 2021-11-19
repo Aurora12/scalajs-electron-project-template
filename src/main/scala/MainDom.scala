@@ -26,7 +26,7 @@ object MainDom {
     _buildInfo = BuildInfo(
       productName = getString(info, "productName").getOrElse(_buildInfo.productName),
       isRelease = getString(info, "isRelease").fold(false)(_ == "true"),
-      version = getString(info, "version").getOrElse(_buildInfo.version),
+      version = getString(info, "version").getOrElse(_buildInfo.version)
     )
 
     useDom()
@@ -39,11 +39,12 @@ object MainDom {
         ElectronHelper.askToQuit(quitQuestion)
         quitQuestion
       }
-      ElectronHelper.initialize
+      ElectronHelper.initialize()
       ElectronHelper.checkForUpdate
     }
   }
 
+  @SuppressWarnings(scala.Array("org.wartremover.warts.StringPlusAny"))
   def useDom(): Unit = {
     val hello = document.createElement("div")
     hello.appendChild(document.createTextNode(s"Hello world with DOM at ${new js.Date}!"))
@@ -64,8 +65,8 @@ object MainDom {
       $("body").append(
         "<button id='badgeTest'>Set application badge count to random number</button>"
       )
-      $("#badgeTest").click(
-        (_: JQueryEventObject) => ElectronHelper.showBadgeCount(rnd.nextInt(100))
+      $("#badgeTest").click((_: JQueryEventObject) =>
+        ElectronHelper.showBadgeCount(rnd.nextInt(100))
       )
       $("body").append("<button id='removeBadge'>Remove application badge count</button>")
       $("#removeBadge").click((_: JQueryEventObject) => ElectronHelper.showBadgeCount(0))

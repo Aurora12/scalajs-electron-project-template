@@ -1,29 +1,28 @@
 import complete.DefaultParsers._
+import sbt.Keys.artifactPath
 
 name := "scalajs-electron-project-template"
 version := "0.0.1"
-scalaVersion := "2.12.8"
+scalaVersion := "2.13.7"
 
 scalaJSUseMainModuleInitializer := true
 scalafmtOnCompile := true
 
-scalacOptions in ThisBuild ++= Seq(
+ThisBuild / scalacOptions ++= Seq(
   "-encoding",
   "utf-8",
   "-feature",
   "-unchecked",
   "-deprecation",
   "-Xlint:-unused,_",
-  "-Xfuture",
   "-Xcheckinit",
   "-Xfatal-warnings",
-  "-Ywarn-adapted-args",
   "-Ywarn-numeric-widen",
   "-Ywarn-unused:imports"
 )
 
 lazy val wartremoverSettings = Seq(
-  wartremoverErrors in (Compile, compile) ++= Seq(
+  Compile / compile / wartremoverErrors ++= Seq(
     Wart.EitherProjectionPartial,
     Wart.IsInstanceOf,
     Wart.TraversableOps,
@@ -50,9 +49,9 @@ targetDirectory := baseDirectory.value / "bin"
 webBuildDir := targetDirectory.value / "web"
 electronBuildDir := targetDirectory.value / "electron"
 
-artifactPath in (Compile, fastOptJS) := webBuildDir.value / "js" / "main.js"
-artifactPath in (Compile, fullOptJS) := webBuildDir.value / "js" / "main.js"
-artifactPath in (Compile, packageJSDependencies) := webBuildDir.value / "js" / "dependencies.js"
+Compile / fastOptJS / artifactPath := webBuildDir.value / "js" / "main.js"
+Compile / fullOptJS / artifactPath := webBuildDir.value / "js" / "main.js"
+Compile / packageJSDependencies / artifactPath := webBuildDir.value / "js" / "dependencies.js"
 clean ~= { _ =>
   IO.delete(new File("./bin"))
 }
@@ -67,17 +66,17 @@ Compile / fullOptJS ~= { result =>
 
 lazy val project =
   Project("ScalajsElectronProjectTemplate", file("."))
-    .enablePlugins(ScalaJSPlugin)
+    .enablePlugins(ScalaJSPlugin, JSDependenciesPlugin)
     .settings(
       buildVersion := sys.props.get("version").getOrElse(version.value),
       wartremoverSettings,
       targetDirectory := baseDirectory.value / "bin",
       libraryDependencies ++= Seq(
-        "org.scala-js" %%% "scalajs-dom" % "0.9.7",
-        "org.querki" %%% "jquery-facade" % "1.2"
+        "org.scala-js" %%% "scalajs-dom" % "1.2.0",
+        "org.querki" %%% "jquery-facade" % "2.0"
       ),
       jsDependencies ++= Seq(
-        "org.webjars" % "jquery" % "2.2.1" / "jquery.js" minified "jquery.min.js",
+        "org.webjars" % "jquery" % "3.6.0" / "jquery.js" minified "jquery.min.js",
         ProvidedJS / "js/example.js"
       ),
       webRelease := {
