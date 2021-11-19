@@ -36,17 +36,17 @@
     "start": "electron ./app/ --enable-logging",
     "postinstall": "electron-builder install-app-deps",
     "win-dist": "electron-builder build -w --x64",
-    "mac-dist": "electron-builder build -m --x64",
+    "mac-dist": "electron-builder build -m --x64 --arm64",
     "linux-dist": "electron-builder build -l --x64",
     "all-dist": "electron-builder build -lmw --x64"
   },
   "devDependencies": {
-    "electron": "^3.0.8",
-    "electron-builder": "20.31.2",
+    "electron": "15.3.2",
+    "electron-builder": "22.13.1",
     "electron-store": "^2.0.0",
-    "electron-context-menu": ">0.9.0",
-    "electron-debug": "^2.0.0",
-    "electron-log": "^2.0.0",
-    "electron-updater": "^3.2.3"
+    "electron-context-menu": "^3.1.1",
+    "electron-debug": "^3.2.0",
+    "electron-log": "^4.4.1",
+    "electron-updater": "^4.3.9"
   }
 }
