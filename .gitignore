@@ -10,6 +10,8 @@ bin/
 node_modules/
 package-lock.json
 
+.bsp
+
 # Intellij project files
 .idea
 *.iml

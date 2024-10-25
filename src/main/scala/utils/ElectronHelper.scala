@@ -7,7 +7,7 @@ import org.scalajs.dom.{document, window}
 import scala.scalajs.js
 import scala.scalajs.js.Dynamic.global
 
-@SuppressWarnings(scala.Array("org.wartremover.warts.Null"))
+@SuppressWarnings(scala.Array("org.wartremover.warts.Null", "org.wartremover.warts.StringPlusAny"))
 object ElectronHelper {
 
   private object Events {
@@ -99,24 +99,30 @@ object ElectronHelper {
         new Notification(
           title.toString,
           NotificationOptions(body = message.toString, sticky = true, silent = true)
-      )
+        )
     )
-    ipcRenderer.on(Events.requestUpdate, (_: js.Object, version: js.Object) => {
-      println(s"ELECTRON: requesting update to $version. Ask user to accept or deny.")
+    ipcRenderer.on(
+      Events.requestUpdate,
+      (_: js.Object, version: js.Object) =>
+        println(s"ELECTRON: requesting update to $version. Ask user to accept or deny.")
       // when ready:
       // ipcRenderer.send(Events.acceptUpdate)
-    })
-    ipcRenderer.on(Events.updateProgress, (_: js.Object, percentage: js.Object) => {
-      println(s"ELECTRON: update progress $percentage")
-    })
-    ipcRenderer.on(Events.confirmQuit, (_: js.Object) => {
-      window.onbeforeunload = null
-      println(s"ELECTRON: confirmed quit!")
-      //
-      // do something to finalize work before quit
-      // when ready, send the following:
-      ipcRenderer.send(Events.readyToQuit)
-    })
+    )
+    ipcRenderer.on(
+      Events.updateProgress,
+      (_: js.Object, percentage: js.Object) => println(s"ELECTRON: update progress $percentage")
+    )
+    ipcRenderer.on(
+      Events.confirmQuit,
+      (_: js.Object) => {
+        window.onbeforeunload = null
+        println(s"ELECTRON: confirmed quit!")
+        //
+        // do something to finalize work before quit
+        // when ready, send the following:
+        ipcRenderer.send(Events.readyToQuit)
+      }
+    )
     println("Renderer process handlers set up!")
   }
 
